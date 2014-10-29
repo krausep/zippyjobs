@@ -12,6 +12,8 @@ namespace ZippyJobs.Models
             Type = "child";
         }
 
+
+
         [DataMember]
         public int ChildId { get; set; }
 
