@@ -23,9 +23,16 @@ namespace ZippyJobs.Models
         [DataMember]
         public DateTime Birthday { get; set; }
 
+        private string _key = String.Empty;
         public string Key
         {
-            get { return String.Format("{0}_{1}", Type, ChildId); }
+            get
+            {
+                if (String.IsNullOrEmpty(_key))
+                    _key = String.Format("{0}_{1}", Type, ChildId);
+
+                return _key;
+            }
         }
 
 

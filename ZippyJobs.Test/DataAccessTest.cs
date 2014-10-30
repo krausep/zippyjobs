@@ -5,6 +5,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Couchbase;
 using Enyim.Caching.Memcached;
 using ZippyJobs.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace ZippyTest
 {
@@ -232,6 +236,7 @@ namespace ZippyTest
                 Assert.IsNotNull(doc.Name);
             }
         }
+
     }
 
 }

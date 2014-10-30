@@ -27,7 +27,6 @@ namespace ZippyJobs.Models
 
         private string _key = String.Empty;
 
-        [DataMember]
         public string Key
         {
             get

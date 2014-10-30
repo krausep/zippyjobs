@@ -13,8 +13,8 @@ namespace ZippyJobs.Controllers
         private static readonly CouchbaseClient Client = new CouchbaseClient();
        
         [HttpGet]
-        [Route("child/children")]
-        public IHttpActionResult Children()
+        [Route("api/child")]
+        public IHttpActionResult Child()
         {
             var view = Client.GetView("child", "children");
             var results = view.Select(child => Client.GetJson<Child>(child.ItemId)).ToList();
@@ -23,7 +23,7 @@ namespace ZippyJobs.Controllers
         }
 
         [HttpGet]
-        [Route("child/{childId}")]
+        [Route("api/child/{childId}")]
         public IHttpActionResult Child(int childId)
         {
             var c = new Child { ChildId = childId };

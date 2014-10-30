@@ -24,9 +24,9 @@ namespace SeedZippyJobsAndRewards
             AddRewards();
             AddChildren();
 
-            var t = new Task(GetChild);
-            t.Start();
-            t.Wait();
+            //var t = new Task(GetChild);
+            //t.Start();
+            //t.Wait();
         }
 
         private static void AddChildren()
