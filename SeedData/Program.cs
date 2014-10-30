@@ -8,6 +8,8 @@ using Couchbase;
 using Couchbase.Extensions;
 using Enyim.Caching.Memcached;
 using ZippyJobs.Models;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace SeedZippyJobsAndRewards
 {
@@ -21,6 +23,10 @@ namespace SeedZippyJobsAndRewards
             AddJobs();
             AddRewards();
             AddChildren();
+
+            var t = new Task(GetChild);
+            t.Start();
+            t.Wait();
         }
 
         private static void AddChildren()
@@ -98,5 +104,31 @@ namespace SeedZippyJobsAndRewards
                 client.Remove("reward_" + i);
             }
         }
+
+        public static async void GetChild()
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Clear();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = httpClient.GetAsync(new Uri("http://localhost:63942/child/children")).Result;
+            response.EnsureSuccessStatusCode();
+            if(response.IsSuccessStatusCode)
+            {
+                var thing = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(thing);
+            }
+        }
+
+        public static async void GetChildy()
+        {
+            var httpClient = new HttpClient();
+            var response = httpClient.GetAsync(new Uri("http://localhost:63942/child/children")).Result;
+            response.EnsureSuccessStatusCode();
+
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+        }
+
+
+
     }
 }
