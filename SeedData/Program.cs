@@ -114,21 +114,9 @@ namespace SeedZippyJobsAndRewards
             response.EnsureSuccessStatusCode();
             if(response.IsSuccessStatusCode)
             {
-                var thing = await response.Content.ReadAsStringAsync();
+                var thing = await response.Content.ReadAsAsync<List<Child>>();
                 Console.WriteLine(thing);
             }
         }
-
-        public static async void GetChildy()
-        {
-            var httpClient = new HttpClient();
-            var response = httpClient.GetAsync(new Uri("http://localhost:63942/child/children")).Result;
-            response.EnsureSuccessStatusCode();
-
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
-        }
-
-
-
     }
 }
