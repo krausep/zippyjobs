@@ -22,3 +22,14 @@
         <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301872">Learn more &raquo;</a></p>
     </div>
 </div>
+
+<script type="text/javascript">
+    var Model = function () {
+        var self = this;
+        self.JobId = ko.observable();
+    }
+
+    $(function () {
+        ko.applyBindings(Model);
+    });
+</script>
