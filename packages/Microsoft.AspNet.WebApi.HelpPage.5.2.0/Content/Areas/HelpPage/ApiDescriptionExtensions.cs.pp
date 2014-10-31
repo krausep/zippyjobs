@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace ZippyJobs.Areas.HelpPage
+namespace $rootnamespace$.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {
