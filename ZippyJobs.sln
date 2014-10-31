@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zippyjobs.api", "ZippyJobs\zippyjobs.api.csproj", "{110AA295-97A5-4ACE-B314-FE2631B99144}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZippyJobs", "ZippyJobs\ZippyJobs.csproj", "{110AA295-97A5-4ACE-B314-FE2631B99144}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZippyJobs.Models", "ZippyJobs.Models\ZippyJobs.Models.csproj", "{1DDE21F2-B72C-4B06-9899-4AD03D1AF6E3}"
 EndProject
