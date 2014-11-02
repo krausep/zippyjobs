@@ -57,11 +57,11 @@ namespace SeedZippyJobsAndRewards
             var client = new CouchbaseClient();
             var jobs = new List<Job>
                 {
-                    new Job{Description = "Job 1", JobId = 1, PointValue = 5},
-                    new Job{Description = "Job 2", JobId = 2, PointValue = 10},
-                    new Job{Description = "Job 3", JobId = 3, PointValue = 5},
-                    new Job{Description = "Job 4", JobId = 4, PointValue = 5},
-                    new Job{Description = "Job 5", JobId = 5, PointValue = 20},
+                    new Job{Description = "Table manners", JobId = 1, PointValue = 5},
+                    new Job{Description = "Clean place", JobId = 2, PointValue = 10},
+                    new Job{Description = "Public behavior", JobId = 3, PointValue = 5},
+                    new Job{Description = "Put away dishes", JobId = 4, PointValue = 5},
+                    new Job{Description = "Brush teeth", JobId = 5, PointValue = 20},
                 };
             foreach (var job in jobs)
             {
@@ -75,9 +75,9 @@ namespace SeedZippyJobsAndRewards
             var client = new CouchbaseClient();
             var rewards = new List<Reward>
              {
-                 new Reward{RewardId = 1, Description = "Reward 1", PointValue = 50, RedeemableInterval = RedeemableInterval.TwiceDaily},
-                 new Reward{RewardId = 2, Description = "Reward 2", PointValue = 100, RedeemableInterval = RedeemableInterval.OnceDaily},
-                 new Reward{RewardId = 3, Description = "Reward 3", PointValue = 250, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 1, Description = "Video games (20 minutes)", PointValue = 50, RedeemableInterval = RedeemableInterval.TwiceDaily},
+                 new Reward{RewardId = 2, Description = "Video games (60 minutes)", PointValue = 250, RedeemableInterval = RedeemableInterval.OnceDaily},
+                 new Reward{RewardId = 3, Description = "Read a book", PointValue = 100, RedeemableInterval = RedeemableInterval.Unlimited},
              };
             foreach (var reward in rewards)
             {

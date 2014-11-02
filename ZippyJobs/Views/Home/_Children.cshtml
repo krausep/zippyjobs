@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "CustomerSetPricingInfo";
+}
+
+@*public int CatalogId { get; set; }
+    public bool IsGlobalPortalStore { get; set; }
+    public bool IsPremierMode { get; set; }
+    public string ShipToCountry { get; set; }
+    public bool ShowUpliftInCart { get; set; }
+    public Dictionary<string, double>
+    CustomConfigDiscountSchedule { get; set; }
+    public Dictionary<string, double>
+    FullCatalogDiscountSchedule { get; set; }
+    public Dictionary<string, double>
+    FullCatalogDollarOffDiscountSchedule { get; set; }
+    public Dictionary<string, double>
+    FullCatalogPercentOffDiscountSchedule { get; set; }*@
+
+<script type="text/javascript">
+
+    function ChildrenViewModel() {
+        var self = this;
+
+        self.Children = ko.observableArray();
+        self.LoadingText = ko.observable("loading...");
+    }
+
+    var viewModel = new ChildrenViewModel();
+
+    $(document).ready(function () {
+        ko.applyBindings(viewModel);
+
+        viewModel.LoadingText = "I am loading up stuff. Hold your horses...";
+        $.getJSON("../api/child", function (data) {
+            viewModel.LoadingText = "Ready";
+            viewModel.Children(data);
+        });
+    });
+
+    function CustomerSetPricingInfoModel() {
+        var self = this;
+
+        self.CustomerSetId = ko.observable("RC959152");
+        self.ShipToCountry = ko.observable("US");
+        self.CatalogId = ko.observable(-1.0);
+        self.IsGlobalPortalStore = ko.observable(false);
+        self.IsPremierMode = ko.observable(false);
+        self.ShowUpliftInCart = ko.observable(false);
+
+        self.CustomDiscountSchedules = ko.observableArray();
+        self.FullCatalogDiscountSchedules = ko.observableArray();
+        self.FullCatalogDollarOffDiscountSchedules = ko.observableArray();
+        self.FullCatalogPercentOffDiscountSchedules = ko.observableArray();
+
+        self.LoadingText = ko.observable("hi");
+    };
+
+    var theModel = new CustomerSetPricingInfoModel();
+
+    $(document).ready(function () {
+        ko.applyBindings(theModel);
+
+        // get the hedge rate
+        $("#getCutomerSetPricingInfo").click(function () {
+            $("#getCutomerSetPricingInfo").disable = true;
+            $("#loadingTextLabel").hidden = false;
+            theModel.LoadingText("hold please...");
+            theModel.CustomDiscountSchedules.removeAll();
+            $.ajax({
+                url: '@Url.Action("CustomerSetPricingInfo")',
+                type: 'POST',
+                data: theModel,
+                dataType: 'json',
+                traditional: true,
+                success: function (result) {
+                    theModel.CatalogId(result.CatalogId);
+                    theModel.IsGlobalPortalStore(result.IsGlobalPortalStore);
+                    theModel.IsPremierMode(result.IsPremierMode);
+                    theModel.ShowUpliftInCart(result.ShowUpliftInCart);
+                    var deal;
+                    var thing = ko.observableArray();
+                    for (var a in result.CustomConfigDiscountSchedule) {
+                        deal = new Object();
+                        deal.discountClass = a;
+                        deal.discountAmount = result.CustomConfigDiscountSchedule[a];
+
+                        thing.push(deal);
+                        theModel.CustomDiscountSchedules.push(deal);
+                    }
+
+                    for (var b in result.FullCatalogDiscountSchedule) {
+                        deal = new Object();
+                        deal.discountClass = b;
+                        deal.discountAmount = result.FullCatalogDiscountSchedule[b];
+                        thing.push(deal);
+                        theModel.FullCatalogDiscountSchedules.push(deal);
+                    }
+
+                    for (var c in result.FullCatalogDollarOffDiscountSchedules) {
+                        deal = new Object();
+                        deal.discountClass = c;
+                        deal.discountAmount = result.FullCatalogDollarOffDiscountSchedules[c];
+                        thing.push(deal);
+                        theModel.FullCatalogDollarOffDiscountSchedules.push(deal);
+                    }
+
+                    for (var d in result.FullCatalogPercentOffDiscountSchedules) {
+                        deal = new Object();
+                        deal.discountClass = d;
+                        deal.discountAmount = result.FullCatalogPercentOffDiscountSchedules[d];
+                        thing.push(deal);
+                        theModel.FullCatalogPercentOffDiscountSchedules.push(deal);
+                    }
+                }
+            });
+            theModel.LoadingText("is this your data?");
+            $("#getCutomerSetPricingInfo").disable = false;
+        });
+    });
+
+</script>
+
+<h2>CustomerSetPricingInfo</h2>
+
+<div class="page-header">
+    <div class="container">
+        <div class="form-group">
+            <label for="customerSetId">Customer Set Id</label>
+            <input type="text" class="form-control" id="customerSetId" placeholder="Enter customer set id" data-bind="value: CustomerSetId" />
+        </div>
+        <div class="form-group">
+            <label for="shipToCountry">CurrencyCode</label>
+            <input type="text" class="form-control" id="shipToCountry" placeholder="Enter ship-to country" data-bind="value: ShipToCountry" />
+        </div>
+        <button class="btn btn-default" id="getCutomerSetPricingInfo">Submit</button>
+        <label data-bind="text: LoadingText" hidden id="loadingTextLabel">
+        </label>
+        <div class="row">
+            <span class="form-group col-md-3">
+                <label for="catalogId">CatalogId</label>
+                <label id="catalogId" data-bind="text: CatalogId"></label>
+            </span>
+            <span class="form-group col-md-3 checkbox">
+                <label for="globalPortalFlag">
+                    <input type="checkbox" id="globalPortalFlag" data-bind="checked: IsGlobalPortalStore" disabled>
+                    Global Portal Store?
+                </label>
+            </span>
+            <span class="form-group col-md-3 checkbox">
+                <label>
+                    <input type="checkbox" id="premierModeFlag" data-bind="checked: IsPremierMode" value="" disabled />
+                    Is Premier Mode?
+                </label>
+            </span>
+            <span class="form-group col-md-3 checkbox">
+                <label>
+                    <input type="checkbox" id="showUpliftFlag" data-bind="checked: ShowUpliftInCart" value="" disabled />
+                    Show uplift in cart?
+                </label>
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Custom Config Discount Schedule</h2>
+            <div style="height:250px;overflow:auto">
+                <table class="table table-condensed table-striped" id="tableCustomConfigDiscountSchedule">
+                    <thead>
+                        <tr>
+                            <th>Discount Class</th>
+                            <th>Discount Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: CustomDiscountSchedules">
+                        <tr>
+                            <td data-bind="text: discountClass"></td>
+                            <td data-bind="text: discountAmount"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Full Catalog Discount Schedule</h2>
+            <div style="height:250px;overflow:auto">
+                <table class="table table-condensed table-striped" id="tableFullCatalogDiscountSchedule">
+                    <thead>
+                        <tr>
+                            <th>Discount Class</th>
+                            <th>Discount Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: FullCatalogDiscountSchedules">
+                        <tr>
+                            <td data-bind="text: discountClass"></td>
+                            <td data-bind="text: discountAmount"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Custom Config Discount Schedule</h2>
+            <div style="height:250px;overflow:auto">
+                <table class="table table-condensed table-striped" id="tableCustomConfigDiscountSchedule">
+                    <thead>
+                        <tr>
+                            <th>Discount Class</th>
+                            <th>Discount Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: FullCatalogDollarOffDiscountSchedules">
+                        <tr>
+                            <td data-bind="text: discountClass"></td>
+                            <td data-bind="text: discountAmount"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2>Full Catalog Discount Schedule</h2>
+            <div style="height:250px;overflow:auto">
+                <table class="table table-condensed table-striped" id="tableFullCatalogDiscountSchedule">
+                    <thead>
+                        <tr>
+                            <th>Discount Class</th>
+                            <th>Discount Percent</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: FullCatalogPercentOffDiscountSchedules">
+                        <tr>
+                            <td data-bind="text: discountClass"></td>
+                            <td data-bind="text: discountAmount"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -25,7 +25,7 @@ namespace ZippyJobs
                       "~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/knockout").Include(
-                "~/Scripts.knockout.js"));
+                "~/Scripts/knockout-{version}.js"));
 
             // Set EnableOptimizations to false for debugging. For more information,
             // visit http://go.microsoft.com/fwlink/?LinkId=301862
