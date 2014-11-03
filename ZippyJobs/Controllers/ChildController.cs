@@ -5,6 +5,7 @@ using System.Web.Http;
 using Couchbase;
 using Couchbase.Extensions;
 using ZippyJobs.Models;
+using System.Web;
 
 namespace ZippyJobs.Controllers
 {
@@ -18,6 +19,9 @@ namespace ZippyJobs.Controllers
         {
             var view = Client.GetView("child", "children");
             var results = view.Select(child => Client.GetJson<Child>(child.ItemId)).ToList();
+            var request = HttpContext.Current.Request;
+            var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
+            results.ForEach(c => c.Url = myUrlBase + c.ChildId);
 
             return Ok(results);
         }
@@ -32,6 +36,9 @@ namespace ZippyJobs.Controllers
             if (child == null)
                 return NotFound();
 
+            var request = HttpContext.Current.Request;
+            var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
+            child.Url = myUrlBase + child.ChildId;
             return Ok(child);
         }
     }

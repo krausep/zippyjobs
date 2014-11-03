@@ -35,8 +35,8 @@ namespace SeedZippyJobsAndRewards
             var client = new CouchbaseClient();
             var children = new List<Child>
             {
-                new Child{ChildId = 1, Name = "David", Birthday = DateTime.Parse("09/30/2006 00:00:00")},
-                new Child{ChildId = 2, Name = "Nathan", Birthday = DateTime.Parse("12/18/2008 00:00:00")},
+                new Child{ChildId = 1, Name = "David", Birthday = DateTime.Parse("09/30/2006 00:00:00"), Jobs = new List<int> {1,3,4}},
+                new Child{ChildId = 2, Name = "Nathan", Birthday = DateTime.Parse("12/18/2008 00:00:00"), Jobs = new List<int> {1,2,3,4,5}},
             };
             foreach (var child in children)
                 client.StoreJson(StoreMode.Set, child.Key, child);

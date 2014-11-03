@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ZippyJobs.Models
@@ -22,6 +23,12 @@ namespace ZippyJobs.Models
 
         [DataMember]
         public DateTime Birthday { get; set; }
+
+        [DataMember]
+        public List<int> Jobs { get; set; }
+
+        [DataMember]
+        public string Url { get; set; }
 
         private string _key = String.Empty;
         public string Key
