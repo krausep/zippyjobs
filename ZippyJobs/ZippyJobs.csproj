@@ -125,6 +125,9 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Children\" />
+    <Folder Include="Views\Jobs\" />
+    <Folder Include="Views\Rewards\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -229,9 +232,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Home\_Children.cshtml" />
-    <Content Include="Views\Children\Index.cshtml" />
-    <Content Include="Views\Jobs\Index.cshtml" />
-    <Content Include="Views\Rewards\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ZippyJobs.Models\ZippyJobs.Models.csproj">

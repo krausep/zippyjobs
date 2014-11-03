@@ -31,7 +31,7 @@
         ko.applyBindings(viewModel);
 
         viewModel.LoadingText = "I am loading up stuff. Hold your horses...";
-        $.getJSON("../api/child", function (data) {
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
             viewModel.LoadingText = "Ready";
             viewModel.Children(data);
         });
