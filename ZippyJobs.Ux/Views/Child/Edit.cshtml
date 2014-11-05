@@ -3,16 +3,16 @@
     ViewBag.Title = "Edit";
 }
 
-<h2 id="h2Child">Edit Child</h2>
+<h2 data-bind="text: 'View/Edit ' + Name()"></h2>
 <div>
     <form role="form">
         <div class="form-group">
-            <label>Child Id</label>
-            <label data-bind="text: ChildId" />
+            <label class="col-sm-1">Child Id</label>
+            <label class="col-sm-2" data-bind="text: ChildId"></label>
         </div>
         <div class="form-group">
-            <label for="nameText">Name</label>
-            <input data-bind="value: Name" id="nameText"/>
+            <label class="col-sm-1" for="nameText">Name</label>
+            <input class="col-sm-2" data-bind="value: Name" id="nameText"/>
         </div>
         <div class="form-group">
             <label for="birthdayText">Birthday</label>
@@ -29,19 +29,19 @@
         self.ChildId = ko.observable();
         self.Name = ko.observable();
         self.Birthday = ko.observable();
-        self.JobIds = ko.observableArray();
+        self.Jobs = ko.observableArray();
     }
 
     var viewModel = new ChildViewModel();
+    ko.applyBindings(viewModel);
 
     $(document).ready(function() {
         
         $.getJSON("@ViewBag.ApiUrl", function (data) {
-            viewModel = data;
+            viewModel.ChildId(data.ChildId);
+            viewModel.Name(data.Name);
+            viewModel.Birthday(data.Birthday);
+            viewModel.Jobs(data.Jobs);
         });
-
-        1
-        $("#h2Child").text = "Edit " + viewModel.Name;
-        ko.applyBindings(viewModel);
     });
 </script>

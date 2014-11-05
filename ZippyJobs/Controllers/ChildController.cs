@@ -19,9 +19,9 @@ namespace ZippyJobs.Controllers
         {
             var view = Client.GetView("child", "children");
             var results = view.Select(child => Client.GetJson<Child>(child.ItemId)).ToList();
-            var request = HttpContext.Current.Request;
-            var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
-            results.ForEach(c => c.Url = myUrlBase + c.ChildId);
+            //var request = HttpContext.Current.Request;
+            //var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
+            //results.ForEach(c => c.Url = myUrlBase + c.ChildId);
 
             return Ok(results);
         }
@@ -36,9 +36,9 @@ namespace ZippyJobs.Controllers
             if (child == null)
                 return NotFound();
 
-            var request = HttpContext.Current.Request;
-            var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
-            child.Url = myUrlBase + child.ChildId;
+            //var request = HttpContext.Current.Request;
+            //var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
+            //child.Url = myUrlBase + child.ChildId;
             return Ok(child);
         }
     }

@@ -243,10 +243,10 @@
     <Content Include="Views\Rewards\Index.cshtml" />
     <Content Include="Views\Child\Index.cshtml" />
     <Content Include="Views\Child\Edit.cshtml" />
+    <Content Include="Views\Job\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Job\" />
     <Folder Include="Views\Reward\" />
   </ItemGroup>
   <ItemGroup>

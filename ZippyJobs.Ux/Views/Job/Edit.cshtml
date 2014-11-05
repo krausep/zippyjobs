@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2 data-bind="text: 'Edit ' + Description()"></h2>
+<div>
+    <form role="form">
+        <div class="form-group">
+            <label>Job Id</label>
+            <label data-bind="text: JobId">13</label>
+        </div>
+        <div class="form-group">
+            <label for="descriptionText">Description</label>
+            <input data-bind="value: Description" id="descriptionText"/>
+        </div>
+        <div class="form-group">
+            <label for="pointValueText">Point Value</label>
+            <input data-bind="value: PointValue" id="pointValueText" />
+        </div>
+    </form>
+</div>
+
+@Scripts.Render("~/bundles/jquery");
+@Scripts.Render("~/bundles/knockout");
+<script type="text/javascript">
+    function JobViewModel() {
+        var self = this;
+        self.JobId = ko.observable();
+        self.Description = ko.observable();
+        self.PointValue = ko.observable();
+    }
+
+    var viewModel = new JobViewModel();
+    ko.applyBindings(viewModel);
+
+    $(document).ready(function() {
+        
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            viewModel.JobId(data.JobId);
+            viewModel.Description(data.Description);
+            viewModel.PointValue(data.PointValue);
+            console.debug("jobId is " + viewModel.JobId);
+            console.debug("description is " + viewModel.Description);
+            console.debug("pointValue is " + viewModel.PointValue);
+        });
+
+        
+    });
+</script>
