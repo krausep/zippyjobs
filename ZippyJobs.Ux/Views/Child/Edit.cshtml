@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2 id="h2Child">Edit Child</h2>
+<div>
+    <form role="form">
+        <div class="form-group">
+            <label>Child Id</label>
+            <label data-bind="text: ChildId" />
+        </div>
+        <div class="form-group">
+            <label for="nameText">Name</label>
+            <input data-bind="value: Name" id="nameText"/>
+        </div>
+        <div class="form-group">
+            <label for="birthdayText">Birthday</label>
+            <input type="date" data-bind="value: Birthday" id="birthdayText" />
+        </div>
+    </form>
+</div>
+
+@Scripts.Render("~/bundles/jquery");
+@Scripts.Render("~/bundles/knockout");
+<script type="text/javascript">
+    function ChildViewModel() {
+        var self = this;
+        self.ChildId = ko.observable();
+        self.Name = ko.observable();
+        self.Birthday = ko.observable();
+        self.JobIds = ko.observableArray();
+    }
+
+    var viewModel = new ChildViewModel();
+
+    $(document).ready(function() {
+        
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            viewModel = data;
+        });
+
+        1
+        $("#h2Child").text = "Edit " + viewModel.Name;
+        ko.applyBindings(viewModel);
+    });
+</script>

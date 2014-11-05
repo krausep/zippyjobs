@@ -13,5 +13,12 @@ namespace ZippyJobs.Ux.Controllers
         {
             return View();
         }
+
+        public ActionResult Edit(int childId)
+        {
+            ViewBag.ChildId = childId;
+            ViewBag.ApiUrl = "http://localhost:63942/api/child/" + childId;
+            return View();
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace ZippyJobs.Ux.Controllers
         // GET: Jobs
         public ActionResult Index()
         {
+            ViewBag.ApiUrl = "http://localhost:63942/api/job";
             return View();
         }
     }
