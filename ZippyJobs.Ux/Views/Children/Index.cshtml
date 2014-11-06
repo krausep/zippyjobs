@@ -30,9 +30,12 @@
     $(document).ready(function () {
         ko.applyBindings(viewModel);
 
-        viewModel.LoadingText = "I am loading up stuff. Hold your horses...";
+        viewModel.LoadingText("I am loading up stuff. Hold your horses...");
         $.getJSON("@ViewBag.ApiUrl", function (data) {
-            viewModel.LoadingText = "Ready";
+            viewModel.LoadingText("Ready");
+            for(var c in data) {
+                data[c].Url = "@Request.Url.Scheme" +":" + "/Child/Edit?childId=" + data[c].ChildId    
+            }
             viewModel.Children(data);
         });
     });
