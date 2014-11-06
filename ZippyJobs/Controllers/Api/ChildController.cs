@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Http;
 using Couchbase;
 using Couchbase.Extensions;
 using ZippyJobs.Models;
-using System.Web;
 
-namespace ZippyJobs.Controllers
+namespace ZippyJobs.Controllers.Api
 {
     public class ChildController : ApiController
     {

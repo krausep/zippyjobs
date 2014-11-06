@@ -1,14 +1,10 @@
-﻿using Couchbase;
-using Couchbase.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Linq;
 using System.Web.Http;
+using Couchbase;
+using Couchbase.Extensions;
 using ZippyJobs.Models;
 
-namespace ZippyJobs.Controllers
+namespace ZippyJobs.Controllers.Api
 {
     public class RewardController : ApiController
     {

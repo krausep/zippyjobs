@@ -6,7 +6,7 @@
         </thead>
         <tbody data-bind="foreach: Jobs">
             <tr>
-                <td data-bind="text: JobId"></td>
+                <td><a data-bind="attr: {href: Url, title: Description}"><label data-bind="text: Description"></label></a></td>
                 <td data-bind="text: Description"></td>
                 <td data-bind="text: PointValue"></td>
             </tr>
@@ -33,7 +33,13 @@
         viewModel.LoadingText = "I am loading up stuff. Hold your horses...";
         $.getJSON("@ViewBag.ApiUrl", function (data) {
             viewModel.LoadingText = "Ready";
+
+            for (var j in data) {
+                console.debug(j);
+                data[j].Url = "@Request.Url.Scheme" + ":" + "/Jobs/Edit/" + data[j].JobId;
+            }
             viewModel.Jobs(data);
+
         });
     });
 </script>

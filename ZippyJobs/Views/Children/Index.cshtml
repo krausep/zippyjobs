@@ -32,11 +32,11 @@
 
         viewModel.LoadingText("I am loading up stuff. Hold your horses...");
         $.getJSON("@ViewBag.ApiUrl", function (data) {
-            viewModel.LoadingText("Ready");
-            for(var c in data) {
-                data[c].Url = "@Request.Url.Scheme" +":" + "/Child/Edit?childId=" + data[c].ChildId    
+            for (var c in data) {
+                data[c].Url = "@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId;
             }
             viewModel.Children(data);
+            viewModel.LoadingText("Ready");
         });
     });
 </script>

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace ZippyJobs.Controllers
+namespace ZippyJobs.Controllers.ux
 {
     public class RewardsController : Controller
     {
         // GET: Rewards
         public ActionResult Index()
         {
+            ViewBag.ApiUrl = "http://localhost:63942/api/reward";
             return View();
         }
     }

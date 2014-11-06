@@ -58,8 +58,8 @@
             viewModel.Birthday(new Date(data.Birthday));
             viewModel.Jobs(data.Jobs);
             for (var j in viewModel.Jobs()) {
-                $.getJSON("@ViewBag.JobUrl" + viewModel.Jobs()[j], function (data) {
-                    viewModel.JobInfos.push(data);
+                $.getJSON("@ViewBag.JobUrl" + viewModel.Jobs()[j], function (jobData) {
+                    viewModel.JobInfos.push(jobData);
                 });
             }
 

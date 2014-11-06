@@ -23,6 +23,9 @@ namespace ZippyJobs.Models
         public int PointValue { get; set; }
 
         [DataMember]
+        public string Url { get; set; }
+
+        [DataMember]
         public string Type { get; private set; }
 
         private string _key = String.Empty;

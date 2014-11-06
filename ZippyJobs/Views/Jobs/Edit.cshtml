@@ -29,19 +29,20 @@
         self.JobId = ko.observable();
         self.Description = ko.observable();
         self.PointValue = ko.observable();
+        self.Url = ko.observable();
     }
 
     var viewModel = new JobViewModel();
     ko.applyBindings(viewModel);
 
-    $(document).ready(function() {
-        
+    $(document).ready(function () {
+
         $.getJSON("@ViewBag.ApiUrl", function (data) {
             viewModel.JobId(data.JobId);
             viewModel.Description(data.Description);
             viewModel.PointValue(data.PointValue);
         });
 
-        
+
     });
 </script>
