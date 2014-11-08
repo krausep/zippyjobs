@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Edit";
+}
+
+<h2 data-bind="text: 'View/Edit ' + Description()"></h2>
+<div class="container">
+    <div>
+        <form role="form">
+            <div class="row form-group">
+                <label class="col-md-2">Reward Id</label>
+                <label class="col-md-2" data-bind="text: RewardId"></label>
+            </div>
+            <div class="row form-group">
+                <label class="col-md-2" for="descriptionText">Description</label>
+                <input class="col-md-2" data-bind="value: Description" id="descriptionText" />
+            </div>
+            <div class="row form-group">
+                <label class="col-md-2" for="pointValueText">Points</label>
+                <input class="col-md-2" data-bind="value: PointValue" id="pointValueText" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery");
+@Scripts.Render("~/bundles/knockout");
+<script type="text/javascript">
+
+    function RewardViewModel() {
+        var self = this;
+        self.RewardId = ko.observable();
+        self.Description = ko.observable();
+        self.PointValue = ko.observable();
+    }
+
+    var viewModel = new RewardViewModel();
+    ko.applyBindings(viewModel);
+
+    $(document).ready(function() {
+
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            viewModel.RewardId(data.RewardId);
+            viewModel.Description(data.Description);
+            viewModel.PointValue(data.PointValue);
+        });
+    });
+</script>

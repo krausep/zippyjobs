@@ -1,0 +1,42 @@
+﻿<h2>Rewards</h2>
+<div>
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+            <tr><th>Reward</th><th>Points</th></tr>
+        </thead>
+        <tbody data-bind="foreach: Rewards">
+            <tr>
+                <td><a data-bind="attr: {href: Url, title: Description}"><label data-bind="text: Description"></label></a></td>
+                <td data-bind="text: PointValue"></td>
+            </tr>
+        </tbody>
+    </table>
+    <label data-bind="text: LoadingText"></label>
+</div>
+
+@Scripts.Render("~/bundles/jquery");
+@Scripts.Render("~/bundles/knockout");
+<script type="text/javascript">
+    function RewardsViewModel() {
+        var self = this;
+
+        self.Rewards = ko.observableArray();
+        self.LoadingText = ko.observable("loading...");
+    }
+
+    var viewModel = new RewardsViewModel();
+
+    $(document).ready(function () {
+        ko.applyBindings(viewModel);
+
+        viewModel.LoadingText("I am loading up stuff. Hold your horses...");
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+
+            for (var j in data) {
+                data[j].Url = "@Request.Url.Scheme" + ":" + "/Rewards/Edit/" + data[j].RewardId;
+            }
+            viewModel.Rewards(data);
+            viewModel.LoadingText("Ready");
+        });
+    });
+</script>

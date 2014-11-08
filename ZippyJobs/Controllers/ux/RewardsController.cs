@@ -10,5 +10,13 @@ namespace ZippyJobs.Controllers.ux
             ViewBag.ApiUrl = "http://localhost:63942/api/reward";
             return View();
         }
+
+        public ActionResult Edit(int id)
+        {
+            ViewBag.JobId = id;
+            ViewBag.ApiUrl = "http://localhost:63942/api/reward/" + id;
+
+            return View();
+        }
     }
 }

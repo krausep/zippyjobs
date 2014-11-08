@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2 data-bind="text: 'View/Edit ' + Name()"></h2>
+<div class="container">
+    <div>
+        <form role="form">
+            <div class="row form-group">
+                <label class="col-md-2">Child Id</label>
+                <label class="col-md-2" data-bind="text: ChildId"></label>
+            </div>
+            <div class="row form-group">
+                <label class="col-md-2" for="nameText">Name</label>
+                <input class="col-md-2" data-bind="value: Name" id="nameText" />
+            </div>
+            <div class="row form-group">
+                <label class="col-md-2" for="birthdayText">Birthday</label>
+                <input class="col-md-2" type="date" data-bind="datePicker: Birthday" id="birthdayText" />
+            </div>
+        </form>
+    </div>
+    <br />
+    <div class="row">
+        <table class="table table-condensed table-striped table-bordered table-hover">
+            <thead>
+                <tr><th>JobId</th><th>Description</th><th>Points</th></tr>
+            </thead>
+            <tbody data-bind="foreach: viewModel.JobInfos">
+                <tr><td data-bind="text: JobId"></td><td data-bind="text: Description"></td><td data-bind="text: PointValue"></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery");
+@Scripts.Render("~/bundles/knockout");
+<script type="text/javascript">
+
+    function ChildViewModel() {
+        var self = this;
+        self.ChildId = ko.observable();
+        self.Name = ko.observable();
+        self.Birthday = ko.observable(new Date());
+        self.Jobs = ko.observableArray();
+        self.JobInfos = ko.observableArray();
+    }
+
+    var viewModel = new ChildViewModel();
+    ko.applyBindings(viewModel);
+
+    $(document).ready(function() {
+        
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            viewModel.ChildId(data.ChildId);
+            viewModel.Name(data.Name);
+            viewModel.Birthday(new Date(data.Birthday));
+            viewModel.Jobs(data.Jobs);
+            for (var j in viewModel.Jobs()) {
+                $.getJSON("@ViewBag.JobUrl" + viewModel.Jobs()[j], function (jobData) {
+                    viewModel.JobInfos.push(jobData);
+                });
+            }
+
+        });
+    });
+</script>
