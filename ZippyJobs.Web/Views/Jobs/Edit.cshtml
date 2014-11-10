@@ -18,7 +18,14 @@
             <label for="pointValueText">Point Value</label>
             <input data-bind="value: PointValue" id="pointValueText" />
         </div>
+        <div class="row form-group col-sm-offset-2">
+            <a class="btn btn-success" onclick="saveChanges()">Save</a>
+            <a class="btn btn-danger" onclick="cancelChanges()">Cancel</a>
+        </div>
     </form>
+    <div>
+        <label data-bind="text: LoadingText"></label>
+    </div>
 </div>
 
 @Scripts.Render("~/bundles/jquery");
@@ -30,19 +37,33 @@
         self.Description = ko.observable();
         self.PointValue = ko.observable();
         self.Url = ko.observable();
+        self.LoadingText = ko.observable("Loading...");
+    }
+
+    function loadJob() {
+        viewModel.LoadingText("Loading job...");
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            viewModel.JobId(data.JobId);
+            viewModel.Description(data.Description);
+            viewModel.PointValue(data.PointValue);
+        });
+        viewModel.LoadingText("Ready");
     }
 
     var viewModel = new JobViewModel();
     ko.applyBindings(viewModel);
 
     $(document).ready(function () {
-
-        $.getJSON("@ViewBag.ApiUrl", function (data) {
-            viewModel.JobId(data.JobId);
-            viewModel.Description(data.Description);
-            viewModel.PointValue(data.PointValue);
-        });
-
-
+        loadJob();
     });
+
+    function saveChanges() {
+        $.post("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
+            loadJob();
+        });
+    }
+
+    function cancelChanges() {
+        loadJob();
+    }
 </script>

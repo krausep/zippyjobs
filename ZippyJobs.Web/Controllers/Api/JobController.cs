@@ -3,6 +3,7 @@ using System.Web.Http;
 using Couchbase;
 using Couchbase.Extensions;
 using ZippyJobs.Models;
+using Enyim.Caching.Memcached;
 
 namespace ZippyJobs.Web.Controllers.Api
 {
@@ -29,6 +30,17 @@ namespace ZippyJobs.Web.Controllers.Api
 
             if (job == null)
                 return NotFound();
+
+            return Ok(job);
+        }
+
+        [HttpPost]
+        [Route("api/job")]
+        public IHttpActionResult Post([FromBody] Job job)
+        {
+            if (job == null || job.JobId == 0) return NotFound();
+
+            Client.StoreJson(StoreMode.Set, job.Key, job);
 
             return Ok(job);
         }

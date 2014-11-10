@@ -3,6 +3,7 @@ using System.Web.Http;
 using Couchbase;
 using Couchbase.Extensions;
 using ZippyJobs.Models;
+using Enyim.Caching.Memcached;
 
 namespace ZippyJobs.Web.Controllers.Api
 {
@@ -36,6 +37,17 @@ namespace ZippyJobs.Web.Controllers.Api
             //var request = HttpContext.Current.Request;
             //var myUrlBase = String.Format("{0}://{1}/api/child/", request.Url.Scheme, request.Url.Authority);
             //child.Url = myUrlBase + child.ChildId;
+            return Ok(child);
+        }
+
+        [HttpPost]
+        [Route("api/child")]
+        public IHttpActionResult Post([FromBody] Child child)
+        {
+            if (child == null || child.ChildId == 0) return NotFound();
+
+            Client.StoreJson(StoreMode.Set, child.Key, child);
+
             return Ok(child);
         }
     }

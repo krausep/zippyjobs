@@ -47,7 +47,7 @@ namespace SeedZippyJobsAndRewards
             Console.WriteLine("Removing children");
             var client = new CouchbaseClient();
 
-            for (int i = 1; i <= 2; i++)
+            for (int i = 0; i <= 2; i++)
                 client.Remove("child_" + i);
         }
 
@@ -89,7 +89,7 @@ namespace SeedZippyJobsAndRewards
         {
             Console.WriteLine("Removing jobs");
             var client = new CouchbaseClient();
-            for (int i = 1; i <= 5; i++)
+            for (int i = 0; i <= 5; i++)
             {
                 client.Remove("job_" + i);
             }
@@ -99,7 +99,7 @@ namespace SeedZippyJobsAndRewards
         {
             Console.WriteLine("Removing rewards");
             var client = new CouchbaseClient();
-            for (int i = 1; i <= 3; i++)
+            for (int i = 0; i <= 3; i++)
             {
                 client.Remove("reward_" + i);
             }

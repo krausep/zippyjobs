@@ -15,6 +15,7 @@ namespace ZippyJobs.Web.Controllers.Ux
         {
             ViewBag.JobId = id;
             ViewBag.ApiUrl = "http://localhost:3334/api/reward/" + id;
+            ViewBag.ApiBaseUrl = "http://localhost:3334/api/reward/";
 
             return View();
         }

@@ -19,6 +19,10 @@
                 <label class="col-md-2" for="birthdayText">Birthday</label>
                 <input class="col-md-2" type="date" data-bind="datePicker: Birthday" id="birthdayText" />
             </div>
+            <div class="row form-group col-sm-offset-2">
+                <a class="btn btn-success" onclick="saveChanges()">Save</a>
+                <a class="btn btn-danger" onclick="cancelChanges()">Cancel</a>
+            </div>
         </form>
     </div>
     <br />
@@ -45,24 +49,38 @@
         self.Birthday = ko.observable(new Date());
         self.Jobs = ko.observableArray();
         self.JobInfos = ko.observableArray();
+        self.LoadingText = ko.observable("Loading...");
+    }
+
+    function loadChild() {
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            viewModel.ChildId(data.ChildId);
+            viewModel.Name(data.Name);
+            viewModel.Birthday(new Date(data.Birthday));
+            viewModel.Jobs(data.Jobs);
+            viewModel.JobInfos.destroyAll();
+            for (var j in viewModel.Jobs()) {
+                $.getJSON("@ViewBag.JobUrl" + viewModel.Jobs()[j], function (jobData) {
+                    viewModel.JobInfos.push(jobData);
+                });
+            }
+        });
     }
 
     var viewModel = new ChildViewModel();
     ko.applyBindings(viewModel);
 
     $(document).ready(function() {
-        
-        $.getJSON("@ViewBag.ApiUrl", function (data) {
-            viewModel.ChildId(data.ChildId);
-            viewModel.Name(data.Name);
-            viewModel.Birthday(new Date(data.Birthday));
-            viewModel.Jobs(data.Jobs);
-            for (var j in viewModel.Jobs()) {
-                $.getJSON("@ViewBag.JobUrl" + viewModel.Jobs()[j], function (jobData) {
-                    viewModel.JobInfos.push(jobData);
-                });
-            }
-
-        });
+        loadChild();
     });
+
+    function saveChanges() {
+        $.post("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
+            loadChild();
+        });
+    }
+
+    function cancelChanges() {
+        loadChild();
+    }
 </script>
