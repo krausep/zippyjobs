@@ -8,6 +8,7 @@ namespace ZippyJobs.Web.Controllers.Ux
         public ActionResult Index()
         {
             ViewBag.ApiUrl = "http://localhost:3334/api/child";
+            ViewBag.JobUrl = "http://localhost:3334/api/job/";
             return View();
         }
 
