@@ -24,7 +24,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <button type="button" class="close" data-dismiss="modal" data-bind="click: $root.cancelChanges"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                     <h4 class="modal-title" id="myModalLabel">Edit Child</h4>
                 </div>
                 <div class="modal-body">
@@ -49,8 +49,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-success" data-bind="click: saveChild">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: cancelChanges">Cancel</button>
                 </div>
             </div>
         </div>
@@ -72,6 +72,17 @@
         self.setSelectedChild = function(child) {
             self.selectedChild(child);
             setSelectedJobs(child);
+        }
+
+        self.cancelChanges = function () {
+            alert("Canceling changes for child " + viewModel.selectedChild().Name);
+        }
+
+        self.saveChild = function () {
+            console.debug(ko.toJS(viewModel.selectedChild()));
+            $.post("@ViewBag.ApiUrl" + "/" + viewModel.selectedChild().ChildId, ko.toJS(viewModel.selectedChild()), function (data) {
+                alert("child saved");
+            });
         }
     }
 
@@ -107,8 +118,7 @@
         self.Jobs = ko.observableArray();
         self.JobInfos = ko.observableArray();
     }
-
-
+    
     var viewModel = new ChildrenViewModel();
 
     function loadJobs() {
