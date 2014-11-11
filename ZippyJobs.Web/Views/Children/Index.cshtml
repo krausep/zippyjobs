@@ -37,7 +37,7 @@
                             <thead>
                                 <tr><th>Job Description</th><th>Points</th><th>Selected</th></tr>
                             </thead>
-                            <tbody data-bind="foreach: allJobs">
+                            <tbody data-bind="foreach: $root.allJobs">
                                 <tr>
                                     <td data-bind="text: description"></td>
                                     <td data-bind="text: pointValue"></td>
@@ -68,7 +68,7 @@
         self.LoadingText = ko.observable("loading...");
 
         // Behaviors
-        self.isJobSelected = function(data) {
+        self.isThisJobSelected = function(data) {
             console.debug("checking for selected jobs");
             for (j in selectedChild().JobIds) {
                 if (data.jobId == j) return true;
@@ -78,6 +78,18 @@
 
         self.setSelectedChild = function(child) {
             self.selectedChild(child);
+            setSelectedJobs(child);
+        }
+    }
+
+    function setSelectedJobs(child) {
+        for (j in child.Jobs) {
+            for(job in viewModel.allJobs()) {
+                if (child.Jobs[j] === viewModel.allJobs()[job].jobId)
+                    viewModel.allJobs()[job].isJobSelected(true);
+                else
+                    viewModel.allJobs()[job].isJobSelected(false);
+            }
         }
     }
 
@@ -95,6 +107,7 @@
         self.Name = ko.observable();
         self.Birthday = ko.observable(new Date());
         self.Jobs = ko.observableArray();
+        self.JobInfos = ko.observableArray();
     }
 
 
@@ -105,10 +118,10 @@
         $.getJSON("@ViewBag.JobUrl", function (data) {
             for (var j in data) {
                 var job = new jobModel();
-                job.jobId = data[j].JobId;
-                job.description = data[j].Description;
-                job.pointValue = data[j].PointValue;
-                job.isJobSelected = false;
+                job.jobId(data[j].JobId);
+                job.description(data[j].Description);
+                job.pointValue(data[j].PointValue);
+                job.isJobSelected(false);
 
                 viewModel.allJobs.push(job);
             }
