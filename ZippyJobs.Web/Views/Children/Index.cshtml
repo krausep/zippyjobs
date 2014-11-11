@@ -49,8 +49,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bind="click: saveChild">Save changes</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: cancelChanges">Cancel</button>
+                    <button type="button" class="btn btn-success" data-bind="click: $root.saveChild">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: $root.cancelChanges">Cancel</button>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@
 
         self.saveChild = function () {
             console.debug(ko.toJS(viewModel.selectedChild()));
-            $.post("@ViewBag.ApiUrl" + "/" + viewModel.selectedChild().ChildId, ko.toJS(viewModel.selectedChild()), function (data) {
+            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
                 alert("child saved");
             });
         }
