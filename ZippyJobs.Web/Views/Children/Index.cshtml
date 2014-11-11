@@ -42,6 +42,7 @@
                                     <td data-bind="text: description"></td>
                                     <td data-bind="text: pointValue"></td>
                                     <td><input type="checkbox" data-bind="checked: isJobSelected" /></td>
+                                    @*<td data-bind="text: isJobSelected"></td>*@
                                 </tr>
                             </tbody>
                         </table>
@@ -68,14 +69,6 @@
         self.LoadingText = ko.observable("loading...");
 
         // Behaviors
-        self.isThisJobSelected = function(data) {
-            console.debug("checking for selected jobs");
-            for (j in selectedChild().JobIds) {
-                if (data.jobId == j) return true;
-            };
-            return false;
-        };
-
         self.setSelectedChild = function(child) {
             self.selectedChild(child);
             setSelectedJobs(child);
@@ -83,13 +76,21 @@
     }
 
     function setSelectedJobs(child) {
+        // clear them all out
+        for (job in viewModel.allJobs()) {
+            viewModel.allJobs()[job].isJobSelected(false);
+        }
         for (j in child.Jobs) {
             for(job in viewModel.allJobs()) {
-                if (child.Jobs[j] === viewModel.allJobs()[job].jobId)
+                if (child.Jobs[j] == viewModel.allJobs()[job].jobId()) {
                     viewModel.allJobs()[job].isJobSelected(true);
-                else
-                    viewModel.allJobs()[job].isJobSelected(false);
+                    console.debug("selected job " + viewModel.allJobs()[job].jobId() + ", selected? " + viewModel.allJobs()[job].isJobSelected());
+                }
             }
+        }
+
+        for (job in viewModel.allJobs()) {
+            console.debug("job id " + viewModel.allJobs()[job].jobId() + " selected? " + viewModel.allJobs()[job].isJobSelected());
         }
     }
 
