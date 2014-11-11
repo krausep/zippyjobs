@@ -80,17 +80,14 @@
         for (job in viewModel.allJobs()) {
             viewModel.allJobs()[job].isJobSelected(false);
         }
+
+        // run through the lists and only select the ones that the child has
         for (j in child.Jobs) {
             for(job in viewModel.allJobs()) {
                 if (child.Jobs[j] == viewModel.allJobs()[job].jobId()) {
                     viewModel.allJobs()[job].isJobSelected(true);
-                    console.debug("selected job " + viewModel.allJobs()[job].jobId() + ", selected? " + viewModel.allJobs()[job].isJobSelected());
                 }
             }
-        }
-
-        for (job in viewModel.allJobs()) {
-            console.debug("job id " + viewModel.allJobs()[job].jobId() + " selected? " + viewModel.allJobs()[job].isJobSelected());
         }
     }
 
