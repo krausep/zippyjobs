@@ -79,8 +79,16 @@
         }
 
         self.saveChild = function () {
-            console.debug(ko.toJS(viewModel.selectedChild()));
-            $.post("@ViewBag.ApiUrl" + "/" + viewModel.selectedChild().ChildId, ko.toJS(viewModel.selectedChild()), function (data) {
+            console.debug(ko.toJS(viewModel.selectedChild().Jobs));
+            if (viewModel.selectedChild().Jobs)
+                viewModel.selectedChild().Jobs.destroyAll();
+            $.each(viewModel.allJobs(), function(index, value) {
+                if (value.isJobSelected()) {
+                    console.debug("found selected job " + value.jobId());
+                    viewModel.selectedChild().Jobs.push(value.jobId());
+                }
+            });
+            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
                 alert("child saved");
             });
         }
@@ -88,12 +96,12 @@
 
     function setSelectedJobs(child) {
         // clear them all out
-        for (job in viewModel.allJobs()) {
+        for (var job in viewModel.allJobs()) {
             viewModel.allJobs()[job].isJobSelected(false);
         }
 
         // run through the lists and only select the ones that the child has
-        for (j in child.Jobs) {
+        for (var j in child.Jobs) {
             for(job in viewModel.allJobs()) {
                 if (child.Jobs[j] == viewModel.allJobs()[job].jobId()) {
                     viewModel.allJobs()[job].isJobSelected(true);
@@ -102,7 +110,7 @@
         }
     }
 
-    function jobModel() {
+    function JobModel() {
         var self = this;
         self.jobId = ko.observable();
         self.description = ko.observable();
@@ -125,7 +133,7 @@
         viewModel.allJobs.destroyAll();
         $.getJSON("@ViewBag.JobUrl", function (data) {
             for (var j in data) {
-                var job = new jobModel();
+                var job = new JobModel();
                 job.jobId(data[j].JobId);
                 job.description(data[j].Description);
                 job.pointValue(data[j].PointValue);
