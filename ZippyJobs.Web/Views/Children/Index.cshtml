@@ -129,7 +129,7 @@
 
     var viewModel = new ChildrenViewModel();
 
-    function loadJobs() {
+    function loadJobs(observableArray) {
         viewModel.allJobs.destroyAll();
         $.getJSON("@ViewBag.JobUrl", function (data) {
             for (var j in data) {
@@ -139,7 +139,7 @@
                 job.pointValue(data[j].PointValue);
                 job.isJobSelected(false);
 
-                viewModel.allJobs.push(job);
+                observableArray.push(job);
             }
         });
     }
@@ -159,7 +159,7 @@
 
     $(document).ready(function () {
         ko.applyBindings(viewModel);
+        loadJobs(viewModel.allJobs);
         loadChildren();
-        loadJobs();
     });
 </script>
