@@ -35,8 +35,9 @@ namespace SeedZippyJobsAndRewards
             var client = new CouchbaseClient();
             var children = new List<Child>
             {
-                new Child{ChildId = 1, Name = "David", Birthday = DateTime.Parse("09/30/2006 00:00:00"), Jobs = new List<int> {1,3,4}},
-                new Child{ChildId = 2, Name = "Nathan", Birthday = DateTime.Parse("12/18/2008 00:00:00"), Jobs = new List<int> {1,2,3,4,5}},
+                new Child{ChildId = 1, Name = "David", Birthday = DateTime.Parse("09/30/2006 00:00:00"), Jobs = new List<int> {1,3,4,5,6,7,8,9,10}},
+                new Child{ChildId = 2, Name = "Nathan", Birthday = DateTime.Parse("12/19/2008 00:00:00"), Jobs = new List<int> {2,4,6,8,10}},
+                new Child{ChildId = 3, Name = "Susie", Birthday = DateTime.Parse("3/16/2010 00:00:00"), Jobs = new List<int> {1,3,5,7,9,11}},
             };
             foreach (var child in children)
                 client.StoreJson(StoreMode.Set, child.Key, child);
@@ -58,10 +59,18 @@ namespace SeedZippyJobsAndRewards
             var jobs = new List<Job>
                 {
                     new Job{Description = "Table manners", JobId = 1, PointValue = 5},
-                    new Job{Description = "Clean place", JobId = 2, PointValue = 10},
+                    new Job{Description = "Clear table", JobId = 2, PointValue = 10},
                     new Job{Description = "Public behavior", JobId = 3, PointValue = 5},
                     new Job{Description = "Put away dishes", JobId = 4, PointValue = 5},
-                    new Job{Description = "Brush teeth", JobId = 5, PointValue = 20},
+                    new Job{Description = "Brush teeth", JobId = 5, PointValue = 5},
+                    new Job{Description = "Put on PJs", JobId = 6, PointValue = 5},
+                    new Job{Description = "Put away dirty clothes", JobId = 7, PointValue = 5},
+                    new Job{Description = "Clean bedroom", JobId = 8, PointValue = 20},
+                    new Job{Description = "20 minutes of reading", JobId = 9, PointValue = 20},
+                    new Job{Description = "Help with cleaning", JobId = 10, PointValue = 20},
+                    new Job{Description = "Good listening", JobId = 11, PointValue = 20},
+
+
                 };
             foreach (var job in jobs)
             {
@@ -77,7 +86,13 @@ namespace SeedZippyJobsAndRewards
              {
                  new Reward{RewardId = 1, Description = "Video games (20 minutes)", PointValue = 50, RedeemableInterval = RedeemableInterval.TwiceDaily},
                  new Reward{RewardId = 2, Description = "Video games (60 minutes)", PointValue = 250, RedeemableInterval = RedeemableInterval.OnceDaily},
-                 new Reward{RewardId = 3, Description = "Read a book", PointValue = 100, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 3, Description = "Bedtime story", PointValue = 50, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 4, Description = "Tickle time", PointValue = 100, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 5, Description = "Family game night", PointValue = 150, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 6, Description = "Go to the park", PointValue = 200, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 7, Description = "TV Time (20 minutes)", PointValue = 50, RedeemableInterval = RedeemableInterval.Unlimited},
+                 new Reward{RewardId = 8, Description = "TV Time (60 minutes)", PointValue = 250, RedeemableInterval = RedeemableInterval.Unlimited},
+
              };
             foreach (var reward in rewards)
             {

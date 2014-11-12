@@ -42,15 +42,14 @@
                                     <td data-bind="text: description"></td>
                                     <td data-bind="text: pointValue"></td>
                                     <td><input type="checkbox" data-bind="checked: isJobSelected" /></td>
-                                    @*<td data-bind="text: isJobSelected"></td>*@
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-bind="click: saveChild">Save changes</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: cancelChanges">Cancel</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" data-bind="click: $root.saveChild">Save changes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" data-bind="click: $root.cancelChanges">Cancel</button>
                 </div>
             </div>
         </div>
@@ -69,40 +68,41 @@
         self.LoadingText = ko.observable("loading...");
 
         // Behaviors
-        self.setSelectedChild = function(child) {
+        self.setSelectedChild = function (child) {
             self.selectedChild(child);
             setSelectedJobs(child);
         }
 
         self.cancelChanges = function () {
-            alert("Canceling changes for child " + viewModel.selectedChild().Name);
+            loadChildren();
         }
 
         self.saveChild = function () {
-            console.debug(ko.toJS(viewModel.selectedChild().Jobs));
             if (viewModel.selectedChild().Jobs)
-                viewModel.selectedChild().Jobs.destroyAll();
-            $.each(viewModel.allJobs(), function(index, value) {
+                viewModel.selectedChild().Jobs = null;
+
+            viewModel.selectedChild().Jobs = Array();
+            $.each(viewModel.allJobs(), function (index, value) {
                 if (value.isJobSelected()) {
-                    console.debug("found selected job " + value.jobId());
                     viewModel.selectedChild().Jobs.push(value.jobId());
                 }
             });
             $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
-                alert("child saved");
             });
+
+            loadChildren();
         }
     }
 
     function setSelectedJobs(child) {
         // clear them all out
-        for (var job in viewModel.allJobs()) {
+        for (job in viewModel.allJobs()) {
             viewModel.allJobs()[job].isJobSelected(false);
         }
 
         // run through the lists and only select the ones that the child has
-        for (var j in child.Jobs) {
-            for(job in viewModel.allJobs()) {
+        for (j in child.Jobs) {
+            for (job in viewModel.allJobs()) {
                 if (child.Jobs[j] == viewModel.allJobs()[job].jobId()) {
                     viewModel.allJobs()[job].isJobSelected(true);
                 }
@@ -110,7 +110,7 @@
         }
     }
 
-    function JobModel() {
+    function jobModel() {
         var self = this;
         self.jobId = ko.observable();
         self.description = ko.observable();
@@ -126,14 +126,14 @@
         self.Jobs = ko.observableArray();
         self.JobInfos = ko.observableArray();
     }
-    
+
     var viewModel = new ChildrenViewModel();
 
     function loadJobs() {
         viewModel.allJobs.destroyAll();
         $.getJSON("@ViewBag.JobUrl", function (data) {
             for (var j in data) {
-                var job = new JobModel();
+                var job = new jobModel();
                 job.jobId(data[j].JobId);
                 job.description(data[j].Description);
                 job.pointValue(data[j].PointValue);
@@ -144,17 +144,22 @@
         });
     }
 
-    $(document).ready(function () {
-        ko.applyBindings(viewModel);
-
+    function loadChildren() {
         viewModel.LoadingText("I am loading up stuff. Hold your horses...");
         $.getJSON("@ViewBag.ApiUrl", function (data) {
             for (var c in data) {
                 data[c].Url = "@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId;
             }
             viewModel.Children(data);
-            loadJobs();
-            viewModel.LoadingText("Ready");
         });
+
+        viewModel.LoadingText("Ready");
+
+    }
+
+    $(document).ready(function () {
+        ko.applyBindings(viewModel);
+        loadChildren();
+        loadJobs();
     });
 </script>
