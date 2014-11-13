@@ -83,19 +83,24 @@
         }
 
         self.saveChild = function () {
-            if (viewModel.selectedChild().Jobs)
-                viewModel.selectedChild().Jobs = null;
-
-            viewModel.selectedChild().Jobs = Array();
             $.each(viewModel.allJobs(), function (index, value) {
+                $.each(viewModel.selectedChild().JobInfos(), function (childJobIndex, childJobValue) {
+                    childJobValue.isJobSelected(value.isJobSelected());
+                });
+            });
+            viewModel.selectedChild().Jobs([]);
+            $.each(viewModel.selectedChild().JobInfos(), function (index, value) {
                 if (value.isJobSelected()) {
+                    console.debug("selecting job " + value.jobId());
                     viewModel.selectedChild().Jobs.push(value.jobId());
+                    console.debug("jobs: ", viewModel.selectedChild().Jobs());
                 }
             });
-            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
-            });
-
-            loadChildren();
+            $.ajaxSetup({ async: false });
+            console.debug("posting child " + viewModel.selectedChild().ChildId());
+            @*$.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
+                //loadChildren();
+            });*@
         }
     }
 
@@ -106,9 +111,9 @@
         }
 
         // run through the lists and only select the ones that the child has
-        for (j in child.Jobs) {
+        for (j in child.Jobs()) {
             for (job in viewModel.allJobs()) {
-                if (child.Jobs[j] == viewModel.allJobs()[job].jobId()) {
+                if (child.Jobs()[j] == viewModel.allJobs()[job].jobId()) {
                     viewModel.allJobs()[job].isJobSelected(true);
                 }
             }
@@ -130,6 +135,7 @@
         self.Birthday = ko.observable(new Date());
         self.Jobs = ko.observableArray();
         self.JobInfos = ko.observableArray();
+        self.Url = ko.observable();
     }
 
     var viewModel = new ChildrenViewModel();
@@ -155,26 +161,26 @@
         $.ajaxSetup({ async: false });
         $.getJSON("@ViewBag.ApiUrl", function (data) {
             for (var c in data) {
-                data[c].Url = "@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId;
-                data[c].JobInfos = ko.observableArray();
+                var child = new ChildViewModel();
+                child.Url("@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId);
+                child.Name(data[c].Name);
+                child.Birthday(data[c].Birthday);
+                child.Jobs(data[c].Jobs);
+                child.ChildId(data[c].ChildId);
+                viewModel.Children.push(child);
             }
-            viewModel.Children(data);
             mapChildJobs();
         });
 
         viewModel.LoadingText("Ready");
-
     }
 
     function mapChildJobs() {
-        console.debug(ko.toJS(viewModel.Children()));
         $.each(viewModel.Children(), function (index, value) {
-            
             $.each(viewModel.allJobs(), function (jobIndex, jobValue) {
-                $.each(value.Jobs, function (childJobIndex, childJobValue) {
+                $.each(value.Jobs(), function (childJobIndex, childJobValue) {
                     if (childJobValue == jobValue.jobId()) {
                         value.JobInfos().push(jobValue);
-                        console.debug("mapped child " + value.Name + " to job " + jobValue.description());
                     }
                 });
             });
@@ -185,5 +191,6 @@
         loadJobs(viewModel.allJobs);
         loadChildren();
         ko.applyBindings(viewModel);
+
     });
 </script>
