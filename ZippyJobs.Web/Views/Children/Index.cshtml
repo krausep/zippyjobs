@@ -79,28 +79,31 @@
         }
 
         self.cancelChanges = function () {
-            loadChildren();
+            loadChildrenData();
         }
 
         self.saveChild = function () {
-            $.each(viewModel.allJobs(), function (index, value) {
-                $.each(viewModel.selectedChild().JobInfos(), function (childJobIndex, childJobValue) {
-                    childJobValue.isJobSelected(value.isJobSelected());
-                });
-            });
+            for (var j in viewModel.allJobs()) {
+                for (var cj in viewModel.selectedChild().JobInfos()) {
+                    if (viewModel.allJobs()[j].jobId == viewModel.selectedChild().JobInfos()[cj].jobId) {
+                        viewModel.selectedChild().JobInfos()[cj].isJobSelected(viewModel.allJobs()[j].isJobSelected());
+                    }
+                }
+            }
+
             viewModel.selectedChild().Jobs([]);
-            $.each(viewModel.selectedChild().JobInfos(), function (index, value) {
-                if (value.isJobSelected()) {
-                    console.debug("selecting job " + value.jobId());
-                    viewModel.selectedChild().Jobs.push(value.jobId());
+            for (var j in viewModel.selectedChild().JobInfos()) {
+                if (viewModel.selectedChild().JobInfos()[j].isJobSelected()) {
+                    console.debug("selecting job " + viewModel.selectedChild().JobInfos()[j].jobId());
+                    viewModel.selectedChild().Jobs.push(viewModel.selectedChild().JobInfos()[j].jobId());
                     console.debug("jobs: ", viewModel.selectedChild().Jobs());
                 }
-            });
-            $.ajaxSetup({ async: false });
+            }
+
             console.debug("posting child " + viewModel.selectedChild().ChildId());
-            @*$.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
-                //loadChildren();
-            });*@
+            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
+                loadChildrenData();
+            });
         }
     }
 
@@ -140,56 +143,60 @@
 
     var viewModel = new ChildrenViewModel();
 
-    function loadJobs(observableArray) {
+    function loadJobs(ajaxResponse, observableArray) {
         viewModel.allJobs.destroyAll();
-        $.ajaxSetup({ async: false });
-        $.getJSON("@ViewBag.JobUrl", function (data) {
-            for (var j in data) {
-                var job = new jobModel();
-                job.jobId(data[j].JobId);
-                job.description(data[j].Description);
-                job.pointValue(data[j].PointValue);
-                job.isJobSelected(false);
 
-                observableArray.push(job);
-            }
-        });
+        for (var j in ajaxResponse) {
+            var job = new jobModel();
+            job.jobId(data[j].JobId);
+            job.description(data[j].Description);
+            job.pointValue(data[j].PointValue);
+            job.isJobSelected(false);
+
+            observableArray.push(job);
+        }
     }
 
-    function loadChildren() {
+    function loadChildren(ajaxResponse, observableArray) {
         viewModel.LoadingText("I am loading up stuff. Hold your horses...");
-        $.ajaxSetup({ async: false });
-        $.getJSON("@ViewBag.ApiUrl", function (data) {
-            for (var c in data) {
-                var child = new ChildViewModel();
-                child.Url("@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId);
-                child.Name(data[c].Name);
-                child.Birthday(data[c].Birthday);
-                child.Jobs(data[c].Jobs);
-                child.ChildId(data[c].ChildId);
-                viewModel.Children.push(child);
-            }
-            mapChildJobs();
-        });
 
-        viewModel.LoadingText("Ready");
+        for (var c in ajaxResponse) {
+            var child = new ChildViewModel();
+            child.Url("@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId);
+            child.Name(data[c].Name);
+            child.Birthday(data[c].Birthday);
+            child.Jobs(data[c].Jobs);
+            child.ChildId(data[c].ChildId);
+            observableArray.push(child);
+        }
     }
 
     function mapChildJobs() {
-        $.each(viewModel.Children(), function (index, value) {
-            $.each(viewModel.allJobs(), function (jobIndex, jobValue) {
-                $.each(value.Jobs(), function (childJobIndex, childJobValue) {
-                    if (childJobValue == jobValue.jobId()) {
-                        value.JobInfos().push(jobValue);
+        for (var c in viewModel.Children()) {
+            for (var j in viewModel.allJobs()) {
+                for (var childJobIndex in viewModel.Children()[c].Jobs()) {
+                    if (viewModel.Children()[c].Jobs()[childJobIndex].jobId() == viewModel.allJobs()[j].jobId()) {
+                        console.debug("mapped job " + viewModel.allJobs()[j].jobId() + " to child " + viewModel.Children()[c].Name());
+                        viewModel.Children()[c].Jobs().push(viewModel.allJobs()[j]);
                     }
-                });
-            });
-        });
+                }
+            }
+        }
+    }
+
+    function loadChildrenData() {
+        $.when($.getJSON("@ViewBag.ApiUrl"), $.getJSON("@ViewBag.JobUrl").done(function (a1, a2) {
+            var children = a1;
+            var jobs = a2;
+            loadJobs(jobs, viewModel.allJobs);
+            loadChildren(children, viewModel.Children);
+            mapChildJobs();
+            viewModel.LoadingText("Ready");
+        }));
     }
 
     $(document).ready(function () {
-        loadJobs(viewModel.allJobs);
-        loadChildren();
+        loadChildrenData();
         ko.applyBindings(viewModel);
 
     });
