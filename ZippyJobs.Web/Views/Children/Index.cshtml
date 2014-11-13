@@ -8,7 +8,7 @@
             <tr>
                 <td><a data-bind="attr: {href: Url, title: Name}"><label data-bind="text: Name"></label></a></td>
                 <td data-bind="text: Birthday"></td>
-                @*<td data-bind="text: Jobs"></td>*@
+                <td data-bind="text: Jobs"></td>
                 <td>
                     <ul data-bind="foreach: $data.JobInfos">
                         <li data-bind="text: description"></li>
@@ -148,9 +148,9 @@
 
         for (var j in ajaxResponse) {
             var job = new jobModel();
-            job.jobId(data[j].JobId);
-            job.description(data[j].Description);
-            job.pointValue(data[j].PointValue);
+            job.jobId(ajaxResponse[j].JobId);
+            job.description(ajaxResponse[j].Description);
+            job.pointValue(ajaxResponse[j].PointValue);
             job.isJobSelected(false);
 
             observableArray.push(job);
@@ -162,22 +162,24 @@
 
         for (var c in ajaxResponse) {
             var child = new ChildViewModel();
-            child.Url("@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId);
-            child.Name(data[c].Name);
-            child.Birthday(data[c].Birthday);
-            child.Jobs(data[c].Jobs);
-            child.ChildId(data[c].ChildId);
+            child.Url("@Request.Url.Scheme" + ":" + "/Children/Edit/" + ajaxResponse[c].ChildId);
+            child.Name(ajaxResponse[c].Name);
+            child.Birthday(ajaxResponse[c].Birthday);
+            child.Jobs(ajaxResponse[c].Jobs);
+            child.JobInfos([]);
+            child.ChildId(ajaxResponse[c].ChildId);
             observableArray.push(child);
         }
     }
 
     function mapChildJobs() {
         for (var c in viewModel.Children()) {
+            viewModel.Children()[c].JobInfos([]);
             for (var j in viewModel.allJobs()) {
                 for (var childJobIndex in viewModel.Children()[c].Jobs()) {
-                    if (viewModel.Children()[c].Jobs()[childJobIndex].jobId() == viewModel.allJobs()[j].jobId()) {
+                    if (viewModel.Children()[c].Jobs()[childJobIndex] == viewModel.allJobs()[j].jobId()) {
                         console.debug("mapped job " + viewModel.allJobs()[j].jobId() + " to child " + viewModel.Children()[c].Name());
-                        viewModel.Children()[c].Jobs().push(viewModel.allJobs()[j]);
+                        viewModel.Children()[c].JobInfos().push(viewModel.allJobs()[j]);
                     }
                 }
             }
@@ -185,14 +187,15 @@
     }
 
     function loadChildrenData() {
-        $.when($.getJSON("@ViewBag.ApiUrl"), $.getJSON("@ViewBag.JobUrl").done(function (a1, a2) {
-            var children = a1;
-            var jobs = a2;
+        viewModel.Children([]);
+        $.when($.getJSON("@ViewBag.ApiUrl"), $.getJSON("@ViewBag.JobUrl")).done(function (a1, a2) {
+            var children = a1[0];
+            var jobs = a2[0];
             loadJobs(jobs, viewModel.allJobs);
             loadChildren(children, viewModel.Children);
             mapChildJobs();
             viewModel.LoadingText("Ready");
-        }));
+        });
     }
 
     $(document).ready(function () {
