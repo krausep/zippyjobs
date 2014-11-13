@@ -8,7 +8,12 @@
             <tr>
                 <td><a data-bind="attr: {href: Url, title: Name}"><label data-bind="text: Name"></label></a></td>
                 <td data-bind="text: Birthday"></td>
-                <td data-bind="text: Jobs"></td>
+                @*<td data-bind="text: Jobs"></td>*@
+                <td>
+                    <ul data-bind="foreach: $data.JobInfos">
+                        <li data-bind="text: description"></li>
+                    </ul>
+                </td>
                 <td class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-bind="text: 'Edit', click: $root.setSelectedChild"></td>
             </tr>
         </tbody>
@@ -131,6 +136,7 @@
 
     function loadJobs(observableArray) {
         viewModel.allJobs.destroyAll();
+        $.ajaxSetup({ async: false });
         $.getJSON("@ViewBag.JobUrl", function (data) {
             for (var j in data) {
                 var job = new jobModel();
@@ -146,20 +152,38 @@
 
     function loadChildren() {
         viewModel.LoadingText("I am loading up stuff. Hold your horses...");
+        $.ajaxSetup({ async: false });
         $.getJSON("@ViewBag.ApiUrl", function (data) {
             for (var c in data) {
                 data[c].Url = "@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId;
+                data[c].JobInfos = ko.observableArray();
             }
             viewModel.Children(data);
+            mapChildJobs();
         });
 
         viewModel.LoadingText("Ready");
 
     }
 
+    function mapChildJobs() {
+        console.debug(ko.toJS(viewModel.Children()));
+        $.each(viewModel.Children(), function (index, value) {
+            
+            $.each(viewModel.allJobs(), function (jobIndex, jobValue) {
+                $.each(value.Jobs, function (childJobIndex, childJobValue) {
+                    if (childJobValue == jobValue.jobId()) {
+                        value.JobInfos().push(jobValue);
+                        console.debug("mapped child " + value.Name + " to job " + jobValue.description());
+                    }
+                });
+            });
+        });
+    }
+
     $(document).ready(function () {
-        ko.applyBindings(viewModel);
         loadJobs(viewModel.allJobs);
         loadChildren();
+        ko.applyBindings(viewModel);
     });
 </script>
