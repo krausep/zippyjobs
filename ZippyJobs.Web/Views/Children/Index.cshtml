@@ -8,9 +8,8 @@
             <tr>
                 <td><a data-bind="attr: {href: Url, title: Name}"><label data-bind="text: Name"></label></a></td>
                 <td data-bind="text: Birthday"></td>
-                <td data-bind="text: Jobs"></td>
                 <td>
-                    <ul data-bind="foreach: $data.JobInfos">
+                    <ul data-bind="foreach: $root.allJobs">
                         <li data-bind="text: description"></li>
                     </ul>
                 </td>
@@ -21,10 +20,6 @@
     <label data-bind="text: LoadingText"></label>
 </div>
 <div class="row">
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-        Launch demo modal
-    </button>
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -166,7 +161,7 @@
             child.Name(ajaxResponse[c].Name);
             child.Birthday(ajaxResponse[c].Birthday);
             child.Jobs(ajaxResponse[c].Jobs);
-            child.JobInfos([]);
+            //child.JobInfos([]);
             child.ChildId(ajaxResponse[c].ChildId);
             observableArray.push(child);
         }
