@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Web.Http.Results;
-using ZippyJobs.Controllers.Api;
+using ZippyJobs.Web.Controllers.Api;
 using ZippyJobs.Models;
 
 namespace ZippyJobs.Test

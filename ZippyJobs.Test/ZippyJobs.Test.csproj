@@ -84,6 +84,10 @@
       <Project>{1dde21f2-b72c-4b06-9899-4ad03d1af6e3}</Project>
       <Name>ZippyJobs.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ZippyJobs.Web\ZippyJobs.Web.csproj">
+      <Project>{3d664af6-da60-44c1-8046-b628a06927ad}</Project>
+      <Name>ZippyJobs.Web</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
