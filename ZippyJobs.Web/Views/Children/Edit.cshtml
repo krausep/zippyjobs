@@ -21,7 +21,7 @@
             </div>
             <div class="row form-group col-sm-offset-2">
                 <a class="btn btn-success" onclick="saveChanges()">Save</a>
-                <a class="btn btn-danger" onclick="cancelChanges()">Cancel</a>
+                <a class="btn btn-danger" href="~/Children/Index">Cancel</a>
             </div>
         </form>
     </div>
@@ -78,9 +78,5 @@
         $.post("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
             loadChild();
         });
-    }
-
-    function cancelChanges() {
-        loadChild();
     }
 </script>

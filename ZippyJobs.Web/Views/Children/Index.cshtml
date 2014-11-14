@@ -8,8 +8,8 @@
             <tr>
                 <td><a data-bind="attr: {href: Url, title: Name}"><label data-bind="text: Name"></label></a></td>
                 <td data-bind="text: Birthday"></td>
-                <td>
-                    <ul data-bind="foreach: $root.allJobs">
+                <td data-bind="text: Jobs">
+                    <ul data-bind="foreach: JobInfos">
                         <li data-bind="text: description"></li>
                     </ul>
                 </td>
@@ -32,12 +32,12 @@
                         <label class="col-md-2" for="nameText">Name</label>
                         <input class="col-md-3" data-bind="value: Name" id="nameText" />
                     </div>
-                    <div class="row">
+                    <div class="row" data-bind="with: selectedChild">
                         <table class="table table-condensed">
                             <thead>
                                 <tr><th>Job Description</th><th>Points</th><th>Selected</th></tr>
                             </thead>
-                            <tbody data-bind="foreach: $root.allJobs">
+                            <tbody data-bind="foreach: JobInfos">
                                 <tr>
                                     <td data-bind="text: description"></td>
                                     <td data-bind="text: pointValue"></td>
@@ -87,10 +87,10 @@
             }
 
             viewModel.selectedChild().Jobs([]);
-            for (var j in viewModel.selectedChild().JobInfos()) {
-                if (viewModel.selectedChild().JobInfos()[j].isJobSelected()) {
-                    console.debug("selecting job " + viewModel.selectedChild().JobInfos()[j].jobId());
-                    viewModel.selectedChild().Jobs.push(viewModel.selectedChild().JobInfos()[j].jobId());
+            for (var jobIndex in viewModel.selectedChild().JobInfos()) {
+                if (viewModel.selectedChild().JobInfos()[jobIndex].isJobSelected()) {
+                    console.debug("selecting job " + viewModel.selectedChild().JobInfos()[jobIndex].jobId());
+                    viewModel.selectedChild().Jobs.push(viewModel.selectedChild().JobInfos()[jobIndex].jobId());
                     console.debug("jobs: ", viewModel.selectedChild().Jobs());
                 }
             }
@@ -161,7 +161,7 @@
             child.Name(ajaxResponse[c].Name);
             child.Birthday(ajaxResponse[c].Birthday);
             child.Jobs(ajaxResponse[c].Jobs);
-            //child.JobInfos([]);
+            child.JobInfos(viewModel.allJobs());
             child.ChildId(ajaxResponse[c].ChildId);
             observableArray.push(child);
         }
@@ -171,14 +171,20 @@
         for (var c in viewModel.Children()) {
             viewModel.Children()[c].JobInfos([]);
             for (var j in viewModel.allJobs()) {
-                for (var childJobIndex in viewModel.Children()[c].Jobs()) {
-                    if (viewModel.Children()[c].Jobs()[childJobIndex] == viewModel.allJobs()[j].jobId()) {
-                        console.debug("mapped job " + viewModel.allJobs()[j].jobId() + " to child " + viewModel.Children()[c].Name());
-                        viewModel.Children()[c].JobInfos().push(viewModel.allJobs()[j]);
-                    }
-                }
+                // create a job info for each of the main jobs. We'll set the 'selected' flag momentarily
+                viewModel.Children()[c].JobInfos().push(viewModel.allJobs[j]);
             }
         }
+
+        //        for (var childJobIndex in viewModel.Children()[c].Jobs()) {
+
+        //            if (viewModel.Children()[c].Jobs()[childJobIndex] == viewModel.allJobs()[j].jobId()) {
+        //                console.debug("mapped job " + viewModel.allJobs()[j].jobId() + " to child " + viewModel.Children()[c].Name());
+        //                viewModel.Children()[c].JobInfos().push(viewModel.allJobs()[j]);
+        //            }
+        //        }
+        //    }
+        //}
     }
 
     function loadChildrenData() {

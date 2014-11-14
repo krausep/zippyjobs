@@ -20,7 +20,7 @@
             </div>
             <div class="row form-group col-sm-offset-2">
                 <a class="btn btn-success" onclick="saveChanges()">Save</a>
-                <a class="btn btn-danger" onclick="cancelChanges()">Cancel</a>
+                <a class="btn btn-danger" href="~/Rewards/Index">Cancel</a>
             </div>
         </form>
     </div>
@@ -59,25 +59,8 @@
     });
 
     function saveChanges() {
-        console.debug(ko.toJSON(viewModel));
-
-        @*$.ajax({
-            type: "POST",
-            url: "@ViewBag.ApiBaseUrl",
-            dataType: 'json',
-            async: false,
-            data: ko.toJS(viewModel),
-            success: function () {
-                loadReward();
-            }
-        });*@
-
         $.post("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
             loadReward();
         });
-    }
-
-    function cancelChanges() {
-        loadReward();
     }
 </script>
