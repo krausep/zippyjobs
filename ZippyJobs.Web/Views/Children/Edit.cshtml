@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Edit";
 }
 
@@ -17,7 +16,7 @@
             </div>
             <div class="row form-group">
                 <label class="col-md-2" for="birthdayText">Birthday</label>
-                <input class="col-md-2" type="date" data-bind="datePicker: Birthday" id="birthdayText" />
+                <input class="col-md-2" type="date" data-bind="value: Birthday" id="birthdayText" />
             </div>
             <div class="row form-group col-sm-offset-2">
                 <a class="btn btn-success" onclick="saveChanges()">Save</a>
@@ -29,10 +28,15 @@
     <div class="row">
         <table class="table table-condensed table-striped table-bordered table-hover">
             <thead>
-                <tr><th>JobId</th><th>Description</th><th>Points</th></tr>
+                <tr><th>JobId</th><th>Description</th><th>Points</th><th>Selected</th></tr>
             </thead>
-            <tbody data-bind="foreach: viewModel.JobInfos">
-                <tr><td data-bind="text: JobId"></td><td data-bind="text: Description"></td><td data-bind="text: PointValue"></td></tr>
+            <tbody data-bind="foreach: JobInfos">
+                <tr>
+                    <td data-bind="text: JobId"></td>
+                    <td data-bind="text: Description"></td>
+                    <td data-bind="text: PointValue"></td>
+                    <td data-bind="checked: IsJobSelected"></td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -52,26 +56,49 @@
         self.LoadingText = ko.observable("Loading...");
     }
 
+    function JobViewModel() {
+        var self = this;
+        self.JobId = ko.observable();
+        self.Description = ko.observable();
+        self.PointValue = ko.observable();
+        self.IsJobSelected = ko.observable();
+    }
+
     function loadChild() {
         $.getJSON("@ViewBag.ApiUrl", function (data) {
             viewModel.ChildId(data.ChildId);
             viewModel.Name(data.Name);
-            viewModel.Birthday(new Date(data.Birthday));
+            viewModel.Birthday(data.Birthday);
             viewModel.Jobs(data.Jobs);
             viewModel.JobInfos.destroyAll();
-            for (var j in viewModel.Jobs()) {
-                $.getJSON("@ViewBag.JobUrl" + viewModel.Jobs()[j], function (jobData) {
-                    viewModel.JobInfos.push(jobData);
+            $.getJSON("@ViewBag.JobUrl", function (data) {
+                $.each(data, function (index, value) {
+                    var job = new JobViewModel();
+                    job.JobId(value.JobId);
+                    job.Description(value.Description);
+                    job.PointValue(value.PointValue);
+                    viewModel.JobInfos().push(job);
+                    console.debug("pushed job id " + job.JobId());
                 });
-            }
+
+                $.each(viewModel.JobInfos(), function (jobIndex, jobValue) {
+                    $.each(viewModel.Jobs(), function (childJobIndex, childJobValue) {
+                        if (jobValue.JobId() == childJobValue) {
+                            console.debug("job " + jobValue.JobId() + " is selected");
+                            jobValue.IsJobSelected(true);
+                        }
+                    });
+                });
+            });
         });
     }
 
     var viewModel = new ChildViewModel();
     ko.applyBindings(viewModel);
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         loadChild();
+        console.debug(viewModel.JobInfos());
     });
 
     function saveChanges() {

@@ -2,24 +2,29 @@
 <div class="row">
     <table class="table table-striped table-bordered table-hover table-condensed">
         <thead>
-            <tr><th>Name</th><th>Birthday</th><th>Jobs</th><th></th></tr>
+            <tr><th>Name</th><th>Birthday</th><th>Jobs</th>@*<th></th>*@</tr>
         </thead>
         <tbody data-bind="foreach: Children">
             <tr>
                 <td><a data-bind="attr: {href: Url, title: Name}"><label data-bind="text: Name"></label></a></td>
                 <td data-bind="text: Birthday"></td>
-                <td data-bind="text: Jobs">
-                    <ul data-bind="foreach: JobInfos">
+                @*<td data-bind="text: Jobs"></td>*@
+                <td>
+                    <ul data-bind="foreach: $data.JobInfos">
                         <li data-bind="text: description"></li>
                     </ul>
                 </td>
-                <td class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-bind="text: 'Edit', click: $root.setSelectedChild"></td>
+                @*<td class="btn btn-primary" data-toggle="modal" data-target="#myModal" data-bind="text: 'Edit', click: $root.setSelectedChild"></td>*@
             </tr>
         </tbody>
     </table>
     <label data-bind="text: LoadingText"></label>
 </div>
 <div class="row">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        Launch demo modal
+    </button>
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -32,12 +37,12 @@
                         <label class="col-md-2" for="nameText">Name</label>
                         <input class="col-md-3" data-bind="value: Name" id="nameText" />
                     </div>
-                    <div class="row" data-bind="with: selectedChild">
+                    <div class="row">
                         <table class="table table-condensed">
                             <thead>
                                 <tr><th>Job Description</th><th>Points</th><th>Selected</th></tr>
                             </thead>
-                            <tbody data-bind="foreach: JobInfos">
+                            <tbody data-bind="foreach: $root.allJobs">
                                 <tr>
                                     <td data-bind="text: description"></td>
                                     <td data-bind="text: pointValue"></td>
@@ -74,31 +79,23 @@
         }
 
         self.cancelChanges = function () {
-            loadChildrenData();
+            loadChildren();
         }
 
         self.saveChild = function () {
-            for (var j in viewModel.allJobs()) {
-                for (var cj in viewModel.selectedChild().JobInfos()) {
-                    if (viewModel.allJobs()[j].jobId == viewModel.selectedChild().JobInfos()[cj].jobId) {
-                        viewModel.selectedChild().JobInfos()[cj].isJobSelected(viewModel.allJobs()[j].isJobSelected());
-                    }
-                }
-            }
+            if (viewModel.selectedChild().Jobs)
+                viewModel.selectedChild().Jobs = null;
 
-            viewModel.selectedChild().Jobs([]);
-            for (var jobIndex in viewModel.selectedChild().JobInfos()) {
-                if (viewModel.selectedChild().JobInfos()[jobIndex].isJobSelected()) {
-                    console.debug("selecting job " + viewModel.selectedChild().JobInfos()[jobIndex].jobId());
-                    viewModel.selectedChild().Jobs.push(viewModel.selectedChild().JobInfos()[jobIndex].jobId());
-                    console.debug("jobs: ", viewModel.selectedChild().Jobs());
+            viewModel.selectedChild().Jobs = Array();
+            $.each(viewModel.allJobs(), function (index, value) {
+                if (value.isJobSelected()) {
+                    viewModel.selectedChild().Jobs.push(value.jobId());
                 }
-            }
-
-            console.debug("posting child " + viewModel.selectedChild().ChildId());
-            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
-                loadChildrenData();
             });
+            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
+            });
+
+            loadChildren();
         }
     }
 
@@ -109,9 +106,9 @@
         }
 
         // run through the lists and only select the ones that the child has
-        for (j in child.Jobs()) {
+        for (j in child.Jobs) {
             for (job in viewModel.allJobs()) {
-                if (child.Jobs()[j] == viewModel.allJobs()[job].jobId()) {
+                if (child.Jobs[j] == viewModel.allJobs()[job].jobId()) {
                     viewModel.allJobs()[job].isJobSelected(true);
                 }
             }
@@ -133,75 +130,60 @@
         self.Birthday = ko.observable(new Date());
         self.Jobs = ko.observableArray();
         self.JobInfos = ko.observableArray();
-        self.Url = ko.observable();
     }
 
     var viewModel = new ChildrenViewModel();
 
-    function loadJobs(ajaxResponse, observableArray) {
+    function loadJobs(observableArray) {
         viewModel.allJobs.destroyAll();
+        $.ajaxSetup({ async: false });
+        $.getJSON("@ViewBag.JobUrl", function (data) {
+            for (var j in data) {
+                var job = new jobModel();
+                job.jobId(data[j].JobId);
+                job.description(data[j].Description);
+                job.pointValue(data[j].PointValue);
+                job.isJobSelected(false);
 
-        for (var j in ajaxResponse) {
-            var job = new jobModel();
-            job.jobId(ajaxResponse[j].JobId);
-            job.description(ajaxResponse[j].Description);
-            job.pointValue(ajaxResponse[j].PointValue);
-            job.isJobSelected(false);
-
-            observableArray.push(job);
-        }
+                observableArray.push(job);
+            }
+        });
     }
 
-    function loadChildren(ajaxResponse, observableArray) {
+    function loadChildren() {
         viewModel.LoadingText("I am loading up stuff. Hold your horses...");
+        $.ajaxSetup({ async: false });
+        $.getJSON("@ViewBag.ApiUrl", function (data) {
+            for (var c in data) {
+                data[c].Url = "@Request.Url.Scheme" + ":" + "/Children/Edit/" + data[c].ChildId;
+                data[c].JobInfos = ko.observableArray();
+            }
+            viewModel.Children(data);
+            mapChildJobs();
+        });
 
-        for (var c in ajaxResponse) {
-            var child = new ChildViewModel();
-            child.Url("@Request.Url.Scheme" + ":" + "/Children/Edit/" + ajaxResponse[c].ChildId);
-            child.Name(ajaxResponse[c].Name);
-            child.Birthday(ajaxResponse[c].Birthday);
-            child.Jobs(ajaxResponse[c].Jobs);
-            child.JobInfos(viewModel.allJobs());
-            child.ChildId(ajaxResponse[c].ChildId);
-            observableArray.push(child);
-        }
+        viewModel.LoadingText("Ready");
+
     }
 
     function mapChildJobs() {
-        for (var c in viewModel.Children()) {
-            viewModel.Children()[c].JobInfos([]);
-            for (var j in viewModel.allJobs()) {
-                // create a job info for each of the main jobs. We'll set the 'selected' flag momentarily
-                viewModel.Children()[c].JobInfos().push(viewModel.allJobs[j]);
-            }
-        }
+        console.debug(ko.toJS(viewModel.Children()));
+        $.each(viewModel.Children(), function (index, value) {
 
-        //        for (var childJobIndex in viewModel.Children()[c].Jobs()) {
-
-        //            if (viewModel.Children()[c].Jobs()[childJobIndex] == viewModel.allJobs()[j].jobId()) {
-        //                console.debug("mapped job " + viewModel.allJobs()[j].jobId() + " to child " + viewModel.Children()[c].Name());
-        //                viewModel.Children()[c].JobInfos().push(viewModel.allJobs()[j]);
-        //            }
-        //        }
-        //    }
-        //}
-    }
-
-    function loadChildrenData() {
-        viewModel.Children([]);
-        $.when($.getJSON("@ViewBag.ApiUrl"), $.getJSON("@ViewBag.JobUrl")).done(function (a1, a2) {
-            var children = a1[0];
-            var jobs = a2[0];
-            loadJobs(jobs, viewModel.allJobs);
-            loadChildren(children, viewModel.Children);
-            mapChildJobs();
-            viewModel.LoadingText("Ready");
+            $.each(viewModel.allJobs(), function (jobIndex, jobValue) {
+                $.each(value.Jobs, function (childJobIndex, childJobValue) {
+                    if (childJobValue == jobValue.jobId()) {
+                        value.JobInfos().push(jobValue);
+                        console.debug("mapped child " + value.Name + " to job " + jobValue.description());
+                    }
+                });
+            });
         });
     }
 
     $(document).ready(function () {
-        loadChildrenData();
+        loadJobs(viewModel.allJobs);
+        loadChildren();
         ko.applyBindings(viewModel);
-
     });
 </script>
