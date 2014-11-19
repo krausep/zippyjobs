@@ -30,7 +30,7 @@
             <thead>
                 <tr><th>JobId</th><th>Description</th><th>Points</th><th>Selected</th></tr>
             </thead>
-            <tbody data-bind="foreach: JobInfos">
+            <tbody data-bind="foreach: $data.JobInfos()">
                 <tr>
                     <td data-bind="text: JobId"></td>
                     <td data-bind="text: Description"></td>
@@ -70,7 +70,15 @@
             viewModel.Name(data.Name);
             viewModel.Birthday(data.Birthday);
             viewModel.Jobs(data.Jobs);
-            viewModel.JobInfos.destroyAll();
+            var job = new JobViewModel();
+            job.JobId(1);
+            job.Description("Description is here");
+            job.PointValue(100);
+            job.IsJobSelected(true);
+            viewModel.JobInfos().push(job);
+            console.debug("inside function " + viewModel.JobInfos());
+
+            @*//viewModel.JobInfos.destroyAll();
             $.getJSON("@ViewBag.JobUrl", function (data) {
                 $.each(data, function (index, value) {
                     var job = new JobViewModel();
@@ -89,16 +97,17 @@
                         }
                     });
                 });
-            });
+            });*@
         });
     }
 
     var viewModel = new ChildViewModel();
-    ko.applyBindings(viewModel);
+    
 
     $(document).ready(function () {
         loadChild();
-        console.debug(viewModel.JobInfos());
+        console.debug("document.ready " + viewModel.JobInfos());
+        ko.applyBindings(viewModel);
     });
 
     function saveChanges() {
