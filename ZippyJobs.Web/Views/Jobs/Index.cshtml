@@ -29,9 +29,9 @@
     $(document).ready(function () {
         ko.applyBindings(viewModel);
 
-        viewModel.LoadingText = "I am loading up stuff. Hold your horses...";
+        viewModel.LoadingText("I am loading up stuff. Hold your horses...");
         $.getJSON("@ViewBag.ApiUrl", function (data) {
-            viewModel.LoadingText = "Ready";
+            viewModel.LoadingText("Ready");
 
             for (var j in data) {
                 data[j].Url = "@Request.Url.Scheme" + ":" + "/Jobs/Edit/" + data[j].JobId;

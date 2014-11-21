@@ -21,10 +21,6 @@
     <label data-bind="text: LoadingText"></label>
 </div>
 <div class="row">
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-        Launch demo modal
-    </button>
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -167,14 +163,12 @@
     }
 
     function mapChildJobs() {
-        console.debug(ko.toJS(viewModel.Children()));
         $.each(viewModel.Children(), function (index, value) {
 
             $.each(viewModel.allJobs(), function (jobIndex, jobValue) {
                 $.each(value.Jobs, function (childJobIndex, childJobValue) {
                     if (childJobValue == jobValue.jobId()) {
                         value.JobInfos().push(jobValue);
-                        console.debug("mapped child " + value.Name + " to job " + jobValue.description());
                     }
                 });
             });

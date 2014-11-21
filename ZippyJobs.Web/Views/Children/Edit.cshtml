@@ -7,10 +7,6 @@
     <div>
         <form role="form">
             <div class="row form-group">
-                <label class="col-md-2">Child Id</label>
-                <label class="col-md-2" data-bind="text: ChildId"></label>
-            </div>
-            <div class="row form-group">
                 <label class="col-md-2" for="nameText">Name</label>
                 <input class="col-md-2" data-bind="value: Name" id="nameText" />
             </div>
@@ -22,15 +18,13 @@
                 <table class="table table-condensed table-striped table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>JobId</th>
                             <th>Description</th>
                             <th>Points</th>
-                            <th>Selected</th>
+                            <th><input type="checkbox" onclick="selectAllJobs()" />Selected</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: JobInfos()">
                         <tr>
-                            <td data-bind="text: JobId"></td>
                             <td data-bind="text: Description"></td>
                             <td data-bind="text: PointValue"></td>
                             <td><input type="checkbox" data-bind="checked: IsJobSelected" /> </td>
@@ -38,7 +32,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="row form-group col-sm-offset-2">
+            <div class="row form-group">
                 <a class="btn btn-success" onclick="saveChanges()">Save</a>
                 <a class="btn btn-danger" href="~/Children/Index">Cancel</a>
             </div>
@@ -66,6 +60,12 @@
         self.Description = ko.observable();
         self.PointValue = ko.observable();
         self.IsJobSelected = ko.observable();
+    }
+
+    function selectAllJobs() {
+        $.each(viewModel.JobInfos(), function (index, value) {
+            value.IsJobSelected(true);
+        });
     }
 
     function loadChild() {
@@ -113,8 +113,6 @@
                 console.debug("found job " + value.JobId());
             }
         });
-        console.debug(viewModel.Jobs());
-        console.debug(ko.toJS(viewModel));
         $.post("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
             loadChild();
         });
