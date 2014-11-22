@@ -18,7 +18,7 @@ namespace ZippyTest
         [TestInitialize]
         public void InitializeTest()
         {
-            
+
         }
 
         [TestMethod]
@@ -40,7 +40,7 @@ namespace ZippyTest
         [TestMethod]
         public void StoreJobWorks()
         {
-            var testJob = new Job() {JobId = 1, Description = "Job 1", PointValue = 5};
+            var testJob = new Job() { JobId = 1, Description = "Job 1", PointValue = 5 };
 
             var client = new CouchbaseClient();
             client.Remove("job_" + testJob.JobId);
@@ -236,6 +236,22 @@ namespace ZippyTest
                 Assert.IsNotNull(doc.Name);
             }
         }
+
+        [TestMethod]
+        public void IncrementCounter()
+        {
+            var client = new CouchbaseClient();
+
+            client.Remove("my::counter");
+
+            var newValue = client.Increment("my::counter", 0L, 1L);
+            Assert.AreEqual(0UL, newValue);
+            newValue = client.Increment("my::counter", 0UL, 1UL);
+            Assert.AreEqual(1UL, newValue);
+            newValue = client.Increment("my::counter", 0UL, 1UL);
+            Assert.AreEqual(2UL, newValue);
+        }
+
 
     }
 

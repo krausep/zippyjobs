@@ -4,6 +4,7 @@ using Couchbase;
 using Couchbase.Extensions;
 using ZippyJobs.Models;
 using Enyim.Caching.Memcached;
+using System;
 
 namespace ZippyJobs.Web.Controllers.Api
 {
@@ -38,9 +39,23 @@ namespace ZippyJobs.Web.Controllers.Api
         [Route("api/reward")]
         public IHttpActionResult Post([FromBody] Reward reward)
         {
-            if (reward == null || reward.RewardId == 0) return NotFound();
+            // create a new reward record
+            var newId = Client.Increment("rewardid::count", 1UL, 1UL);
+
+            reward.RewardId = Convert.ToInt32(newId);
 
             Client.StoreJson(StoreMode.Set, reward.Key, reward);
+
+            return Ok(reward);
+        }
+
+        [HttpPut]
+        [Route("api/reward")]
+        public IHttpActionResult Put([FromBody] Reward reward)
+        {
+            if (reward == null || reward.RewardId == 0) return NotFound();
+            // update a reward record
+            Client.StoreJson(StoreMode.Add, reward.Key, reward);
 
             return Ok(reward);
         }

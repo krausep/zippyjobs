@@ -28,16 +28,11 @@ namespace ZippyJobs.Models
         [DataMember]
         public string Type { get; private set; }
 
-        private string _key = String.Empty;
-
         public string Key
         {
             get
             {
-                if (String.IsNullOrEmpty(_key))
-                    _key = String.Format("{0}_{1}", Type, JobId);
-
-                return _key;
+                return String.Format("{0}_{1}", Type, JobId);
             }
         }
     }

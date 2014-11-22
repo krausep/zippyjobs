@@ -88,7 +88,7 @@
                     viewModel.selectedChild().Jobs.push(value.jobId());
                 }
             });
-            $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
+            $.put("@ViewBag.ApiUrl", ko.toJS(viewModel.selectedChild()), function (data) {
             });
 
             loadChildren();

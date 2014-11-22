@@ -58,7 +58,7 @@
     });
 
     function saveChanges() {
-        $.post("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
+        $.put("@ViewBag.ApiBaseUrl", ko.toJS(viewModel), function (data) {
             loadJob();
         });
     }

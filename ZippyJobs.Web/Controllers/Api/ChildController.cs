@@ -4,6 +4,7 @@ using Couchbase;
 using Couchbase.Extensions;
 using ZippyJobs.Models;
 using Enyim.Caching.Memcached;
+using System;
 
 namespace ZippyJobs.Web.Controllers.Api
 {
@@ -44,11 +45,27 @@ namespace ZippyJobs.Web.Controllers.Api
         [Route("api/child")]
         public IHttpActionResult Post([FromBody] Child child)
         {
-            if (child == null || child.ChildId == 0) return NotFound();
+            // create a new child record
+            var newId = Client.Increment("childid::count", 1UL, 1UL);
+
+            child.ChildId = Convert.ToInt32(newId);
 
             Client.StoreJson(StoreMode.Set, child.Key, child);
 
             return Ok(child);
+        }
+
+        [HttpPut]
+        [Route("api/child")]
+        public IHttpActionResult Put([FromBody] Child child)
+        {
+            // update a child record
+            if (child == null || child.ChildId == 0) return NotFound();
+
+            Client.StoreJson(StoreMode.Add, child.Key, child);
+
+            return Ok(child);
+
         }
     }
 }
