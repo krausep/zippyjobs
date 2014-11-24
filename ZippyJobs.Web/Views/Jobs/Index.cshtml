@@ -70,7 +70,8 @@
     function saveNewJob() {
 
         $.post("@ViewBag.ApiUrl", ko.toJS(viewModel.NewJob), function (data) {
-            loadJobs();
+            console.debug("got new job " + data.JobId);
+            viewModel.Jobs.push(viewModel.NewJob());
         });
 
     }
