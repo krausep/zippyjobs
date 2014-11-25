@@ -46,6 +46,9 @@ namespace ZippyJobs.Web.Controllers.Api
 
             Client.StoreJson(StoreMode.Set, job.Key, job);
 
+            var view = Client.GetView("child", "jobs").Stale(StaleMode.False);
+            var results = view.Select(j => Client.GetJson<Job>(j.ItemId)).ToList();
+
             return Ok(job);
         }
 
